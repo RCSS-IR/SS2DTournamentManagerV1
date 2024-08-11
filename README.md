@@ -1,9 +1,9 @@
-# SS2DTournamentRunner
+# SS2DTournamentManager
 
 **Django4** based application for managing Soccer Simulation 2D Tournament. With using this tool participant in can upload team binary and select binary for match and test their codes.
 
 ## Project Status
-Note: This repository, **SS2DTournamentRunnerV1**, will be deprecated in favor of developing version 2 of **SS2DTM** at [this repo group](https://github.com/RCSS-Tournament-Manager). The new version will include enhanced features, improved performance, and additional functionality. We encourage users and contributors to stay tuned for updates on the progress of SS2DTM Version 2.
+Note: This repository, **SS2DTournamentManagerV1**, will be deprecated in favor of developing version 2 of **SS2DTM** at [this repo group](https://github.com/RCSS-Tournament-Manager). The new version will include enhanced features, improved performance, and additional functionality. We encourage users and contributors to stay tuned for updates on the progress of SS2DTM Version 2.
 
 ## Requirements
 
