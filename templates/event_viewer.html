@@ -1,0 +1,91 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+
+{% block title %}Events{% endblock %}
+
+{% if user.is_superuser %}
+
+{% block content %}
+
+
+{{total_obj|json_script:"json-total"}}
+
+<div class="search">
+  <input type="text" id="event-search" class="search__input" placeholder="Search...">
+  <div class="search__icon">
+    <i class="fa-brands fa-searchengin"></i>
+  </div>
+</div>
+<table class="table team-table" id="event-table">
+  <thead>
+    <tr>
+        <th style="min-width:55px" scope="col"><span class="table-column"> Id  <i class="caret"></span></th>
+        <th style="min-width:90px" scope="col"><span class="table-column"> BaseID <i class="caret"></span></th>
+        <th scope="col"><span class="table-column"> Name <i class="caret"></span></th>
+        <!-- <th scope="col"><span class="table-column"> Type <i class="caret"></span></th> -->
+        <th style="min-width:75px" scope="col"><span class="table-column"> User <i class="caret"></span></th>
+        <th scope="col"><span class="table-column"> IP <i class="caret"></span></th>
+        <th scope="col"><span class="table-column"> Date <i class="caret"></span></th>
+        <th style="min-width:145px" scope="col"><span class="table-column"> Request_Type <i class="caret"></span></th>
+        <th scope="col"><span class="table-column"> Status <i class="caret"></span></th>
+        <th scope="col"><span class="table-column"> Features <i class="caret"></span></th>
+    </tr>
+  </thead>
+
+  <tbody id="event-table-body">
+    {% for event in events %}
+    <tr class="event-row">
+      <td> #{{ event.id }} </td>
+      {% if event.BaseID == -1 %}
+      <td> #0 </td>
+      {% else %}
+      <td> #{{ event.BaseID }} </td>
+      {% endif %}
+      <td> {{ event.Name }} </td>
+      <!-- <td> {{ event.Type }} </td> -->
+      <td> {{ event.User }} </td>
+      <td> {{ event.IP }} </td>
+      <td> {{ event.Date }} </td>
+      <td> {{ event.Request_Type }} </td>
+      <td> {{ event.Status }} </td>
+      <td> {{ event.Features }} </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+{% if load_more %}
+<div style="margin: 8em" class="h-100 d-flex justify-content-center align-items-center">
+  <div class="spinner-border text-primary not-visible" role="status" id="spinner">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="load-more__btn" id="btn">
+    <button type="button" class="btn btn-success">Load More Events</button>
+  </div>
+</div>
+<a class="btn btn-success team-reg-button" style="margin: 8em" href="{% url 'event_viewer_load_all' %}">Load All</a>
+{% else %}
+<div class="load-more__btn not-visible" id="btn">
+  <button type="button" class="btn btn-success">Load More Events</button>
+</div>
+{% endif %}
+
+<div class="alert alert-danger not-visible" role="alert" id='alert'>
+  No more Events to load!!
+</div>
+
+
+{% endblock %}
+{% block script %}
+{% load static %}
+<script src="{% static 'script/event-table-script.js' %}"></script>
+{% endblock %}
+
+
+{% else %}
+<script>
+  window.location.href = "/main/";
+  window.location.replace("/main/");
+</script>
+{% endif %}

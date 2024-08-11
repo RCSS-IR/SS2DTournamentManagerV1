@@ -1,0 +1,6 @@
+[Unit]
+Description="Django-RQ Workers"
+Wants=rqworker@1.service rqworker@2.service rqworker@3.service rqworker@4.service
+
+[Install]
+WantedBy=multi-user.target

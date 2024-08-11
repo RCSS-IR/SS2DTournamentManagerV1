@@ -1,0 +1,125 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+
+{% block title %}Teams{% endblock %}
+
+{% if user.is_superuser %}
+
+{% block content %}
+
+{% if messages %}
+<div class="ctrl-panel2">
+  <h3> Something Went Wrong </h3>
+  {% for message in messages %}
+  {{ message }}
+  {% endfor %}
+</div>
+{% endif %}
+<button type="button" class="btn btn-success team-reg-button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+  data-bs-whatever="">Add New Team</button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add New Team</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% if messages %}
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        {% endif %}
+        <form action="/main/teams/add_team" method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_name" class="col-form-label">Name:</label>
+            <input type="text" class="form-control" name="name" maxlength="50" required="" id="id_name"
+              value="{{ team_form.name }}">
+          </div>
+          <div class="mb-3">
+            <label for="id_type" class="col-form-label">Type:</label>
+            <input type="text" class="form-control" name="type" maxlength="100" required="" id="id_type"
+              value="{{ team_form.type }}">
+          </div>
+          <label for="id_password" class="col-form-label">Password:</label>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" name="password" maxlength="50" required="" id="id_password"
+              value="{{ team_form.password }}">
+              <button class="btn btn-outline-secondary" onclick="genPassword()" type="button">Generate</button>
+          </div>
+          <div class="mb-3">
+            <label for="id_email" class="col-form-label">Email:</label>
+            <input type="email" class="form-control" name="email" maxlength="100" required="" id="id_email"
+              value="{{ team_form.email }}">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" value="Submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="search">
+  <input type="text" id="team-search" class="search__input" placeholder="Search...">
+  <div class="search__icon">
+    <i class="fa-brands fa-searchengin"></i>
+  </div>
+</div>
+
+<table class="table team-table" id="admin-table">
+  <thead>
+    <tr>
+      <th scope="col"><span class="table-column"> Team Name <i class="caret"></span></th>
+      <th scope="col"><span class="table-column"> User Name <i class="caret"></span></th>
+      <th scope="col"><span class="table-column"> Password <i class="caret"></span></th>
+      <th scope="col"><span class="table-column"> Email <i class="caret"></span></th>
+      <th scope="col"><span class="table-column"> Type <i class="caret"></span></th>
+      <th scope="col"><span class="table-column"> Last Upload <i class="caret"></span></th>
+      <th scope="col"><span class="table-column"> Status <i class="caret"></span></th>
+      <th scope="col"><span class="table-column"> Action <i class="caret"></span></th>
+    </tr>
+  </thead>
+  <tbody id="admin-table-body">
+    {% for team in teams %}
+    <tr>
+      <th scope="row">{{ team.name }}</th>
+      <td>{{ team.user.username }}</td>
+      <td>{{ team.password }}</td>
+      <td>{{ team.email }}</td>
+      <td>{{ team.type }}</td>
+      <td>{{ team.last_upload }}</td>
+      <td>{{ team.status }}</td>
+      <td>
+        <a class="action" href="{% url 'edit_team' id=team.id %}" title="Edit Team"><i
+          class="fa-solid fa-pen-to-square fa-lg" style="color: blueviolet"></i></a>
+        <a class="action" onclick="return confirm('Are you sure? Do you want to Delete team {{ team.name }}?')"
+          href="{% url 'del_team' id=team.id %}" title="Delete Team"><i class="fa-solid fa-trash-can fa-lg"
+            style="color: red"></i></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a class="btn btn-success team-reg-button" style="margin-top: 8em" href="{% url 'csv_teams_export' %}">Download Teams as CSV</a>
+
+{% endblock %}
+{% block script %}
+{% load static %}
+<script src="{% static 'script/admin-table-script.js' %}"></script>
+<script src="{% static 'script/passgen-script.js' %}"></script>
+
+{% endblock %}
+
+
+{% else %}
+<script>
+  window.location.href = "/main/";
+  window.location.replace("/main/");
+</script>
+{% endif %}

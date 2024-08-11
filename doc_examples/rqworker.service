@@ -1,0 +1,17 @@
+[Unit]
+Description="Django-RQ Worker"
+After=network.target
+
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+WorkingDirectory=/home/mroa/SS2DTournamentRunner
+ExecStart=/home/mroa/SS2DTournamentRunner/venv/bin/python \
+    /home/mroa/SS2DTournamentRunner/manage.py \
+    rqworker default 
+
+[Install]
+WantedBy=multi-user.target

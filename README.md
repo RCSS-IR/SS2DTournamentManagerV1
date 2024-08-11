@@ -313,7 +313,7 @@ If you ask for the status of your worker after it’s been killed, systemd will 
 You can add a watcher for checking any file change and restart the RQWorker, use this only for development and disable it after your testing.
 
 ```bash
-sudo nano /etc/systemd/system/rqworker-bigbro.service
+sudo nano /etc/systemd/system/rqworker-watcher.service
 ```
 
 ```bash
@@ -330,7 +330,7 @@ WantedBy=multi-user.target
 ```
 
 ```bash
-sudo nano /etc/systemd/system/rqworker-bigbro.path
+sudo nano /etc/systemd/system/rqworker-watcher.path
 ```
 
 ```bash
@@ -344,8 +344,8 @@ WantedBy=multi-user.target
 Enable and start the watcher-service (only for development / Disable in production)
 
 ```bash
-sudo systemctl enable rqworker-bigbro.path
-sudo systemctl start rqworker-bigbro.path
+sudo systemctl enable rqworker-watcher.path
+sudo systemctl start rqworker-watcher.path
 ```
 
 #### Run Multiple Instance of the RQWorker Service to Manage More Servers
@@ -558,7 +558,7 @@ Feel free to submit issues and enhancement requests.
 Please use [Discord](https://discord.gg/yFxkCcatGe) to report specific bugs and errors.  
 you can find us there:
 
-* Alireza Sadraii : Alireza Sadraii#1141
+* Alireza Sadraii Rad : Alireza Sadraii#1141
 * Nader Zare : naderzare#3664
 * Omid Amini : MROA#1608
 
@@ -575,4 +575,3 @@ Please refer to each project's style and contribution guidelines for submitting 
  5. Submit a **Pull request** so that we can review your changes
 
 NOTE: Be sure to merge the latest from "upstream" before making a pull request!
-

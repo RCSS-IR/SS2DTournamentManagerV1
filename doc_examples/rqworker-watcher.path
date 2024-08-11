@@ -1,0 +1,5 @@
+[Path]
+PathModified=/home/mroa/SS2DTournamentRunner/main
+
+[Install]
+WantedBy=multi-user.target

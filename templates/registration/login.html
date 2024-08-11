@@ -1,0 +1,76 @@
+<!-- templates/registration/login.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+
+{% block content %}
+{% if user.is_authenticated %}
+<script>
+  window.location.href = "/";
+  window.location.replace("/");
+</script>
+{% else %}
+<div class="background">
+  <video autoplay muted loop id="myVideo">
+    <source src="{% static 'video\background.mp4' %}" type="video/mp4">
+    Your browser does not support HTML5 video. I am Sorry.
+  </video>
+  <div class="overlay"></div>
+</div>
+
+<div class="login-box">
+  <h2>Login</h2>
+  {# <form method="post">#}
+    {# {% csrf_token %}#}
+    {# {{ form.as_p }}#}
+    {# <button type="submit">Log In</button>#}
+    {# </form>#}
+  <form method="post" id="login_form">
+    {% csrf_token %}
+    <div class="user-box">
+      <input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150"
+        required id="id_username">
+      <label for="id_username" class="form-label">Username</label>
+    </div>
+    <div class="user-box">
+      <input type="password" name="password" autocomplete="current-password" required id="id_password">
+      <label for="id_password" class="form-label">Password</label>
+    </div>
+    {% if form.errors %}
+      <h3 style="color:#ff4400;">Invalid Login Credentials</h3>
+    {% endif %}
+    <input id="form_submit" type="submit" style="display: none">
+    <a href="javascript:{}" onclick="document.getElementById('form_submit').click();return false;">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      Submit
+    </a>
+
+  </form>
+
+</div>
+{% endif %}
+{% endblock %}
+{% block script %}
+<!-- <script type="text/javascript">window.$crisp = []; window.CRISP_WEBSITE_ID = "";
+  (function () {
+    d = document; s = d.createElement("script");
+    s.src = "https://client.crisp.chat/l.js"; s.async = 1;
+    d.getElementsByTagName("head")[0].appendChild(s);
+  })();
+</script> -->
+<script>
+  var form = document.getElementById("login_form");
+  form.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("form_submit").click();
+    }
+  });
+
+</script>
+{% endblock %}

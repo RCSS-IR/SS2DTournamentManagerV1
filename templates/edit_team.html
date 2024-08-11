@@ -1,0 +1,64 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+
+
+{% block title %}Edit Team{% endblock %}
+
+{% if user.is_superuser %}
+
+{% block content %}
+{% load static %}
+<link href="{% static 'css/edit-style.css' %}" type="text/css" rel="stylesheet">
+<hgroup>
+    <h1>Edit Team {{ team.name }} no. {{ team.id }}
+        <div class="alert alert-danger" role="alert">
+            Editing Teams while uploading is active, is dangerous for the DB.
+            Please be cautious.
+        </div>
+</hgroup>
+<form action="/main/teams/edit_team/{{ team.id }}" method="post">
+    {% csrf_token %}
+    <div class="group">
+        <input type="text" class="form-control used" name="name" maxlength="50" required="" id="id_name"
+            value="{{ team.name }}" readonly="readonly"> <span class="highlight"></span><span class="bar"></span>
+        <label for="id_name"> Name:</label>
+    </div>
+    <div class="group">
+        <input type="text" class="form-control used" name="type" maxlength="50" required="" id="id_type"
+            value="{{ team.type }}"> <span class="highlight"></span><span class="bar"></span>
+        <label for="id_type"> Type:</label>
+    </div>
+    <div class="group">
+        <input type="text" class="form-control used" name="password" maxlength="50" required="" id="id_password"
+            value="{{ team.password }}"> <span class="highlight"></span><span class="bar"></span>
+        <label for="id_password"> Password:</label>
+    </div>
+    <div class="group">
+        <input type="email" class="form-control used" name="email" maxlength="100" required="" id="id_email"
+            value="{{ team.email }}"><span class="highlight"></span><span class="bar"></span>
+        <label for="id_email"> Email:</label>
+    </div>
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-danger" value="Submit">Submit</button>
+        <button type="button" onclick="history.back()" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+      </div>
+
+
+</form>
+
+{% endblock %}
+{% block script %}
+
+<script src="{% static 'script/edit-team-script.js' %}"></script>
+
+{% endblock %}
+
+{% else %}
+
+<script>
+    window.location.href = "/accounts/login/";
+    window.location.replace("/accounts/login/");
+</script>
+
+{% endif %}
+

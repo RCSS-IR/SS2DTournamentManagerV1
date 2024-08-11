@@ -1,0 +1,20 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+<script>
+    window.location.href = "/main/";
+    window.location.replace("/main/");
+</script>
+
+{% else %}
+<script>
+    window.location.href = "/accounts/login/";
+    window.location.replace("/accounts/login/");
+</script>
+{% endif %}
+{% endblock %}

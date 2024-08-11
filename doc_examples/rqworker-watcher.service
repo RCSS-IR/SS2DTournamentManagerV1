@@ -1,0 +1,10 @@
+[Unit]
+Description=Django-RQ Watcher
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl restart rqworker.service
+
+[Install]
+WantedBy=multi-user.target

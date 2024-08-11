@@ -1,0 +1,113 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+
+{% block title %}Meet the Team{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+{% load static %}
+<link href="{% static 'css/our-team-style.css' %}" type="text/css" rel="stylesheet">
+
+<div class="background">
+    <video autoplay muted loop id="myVideo">
+        <source src="{% static 'video\bg-main.mp4' %}" type="video/mp4">
+        Your browser does not support HTML5 video. I am Sorry.
+    </video>
+    <div class="overlay"></div>
+</div>
+<section class="speakers-section">
+    <div class="parallax-scene parallax-scene-2 anim-icons">
+        <span data-depth="0.40" class="parallax-layer icon icon-circle-5"></span>
+        <span data-depth="0.99" class="parallax-layer icon icon-circle-5"></span>
+    </div>
+
+    <div class="container">
+        <div class="sec-title light text-center">
+            <h2>Contributors</h2>
+            <span class="title"><a href="https://discord.gg/aUT4UChjr5">Discord Link for Contacting Admins/Devs</a></span>
+        </div>
+
+        <div class="row">
+       
+            <div class="speaker-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="400ms">
+                <div class="inner-box">
+                    <div class="image-box">
+                        <figure class="image"><img src="{% static 'image\nader_zare.jpg' %}" alt="">
+                            <div class="social-links">
+                                <ul>
+                                    <h3 class="name">Nader Zare</h3>
+                                   <li><a href="https://github.com/naderzare"><span class="fa-brands fa-github"></span></a></li> 
+                                   <!-- <li><a href="#"><span class="fa-brands fa-twitter"></span></a></li>  -->
+                                   <li><a href="https://www.linkedin.com/in/nader-zare/"><span class="fa-brands fa-linkedin-in"></span></a></li> 
+                                   <li><a href="http://t.me/naderzare91"><span class="fa-brands fa-telegram"></span></a></li> 
+                                </ul>
+                            </div>
+                        </figure>
+                    </div>
+                    <div class="caption-box">
+                        <h4 class="name"><a href="#">Nader Zare</a></h4>
+                        <span class="designation">Developer</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="speaker-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp">
+                <div class="inner-box">
+                    <div class="image-box">
+                        <figure class="image"><img src="{% static 'image\omid_amini.jpg' %}" alt="">
+                            <div class="social-links">
+                                <ul>
+                                    <h3 class="name">Omid Amini</h3>
+
+                                   <li><a href="https://github.com/mroa4"><span class="fa-brands fa-github-alt"></span></a></li> 
+                                   <li><a href="https://twitter.com/mr_oa4"><span class="fab fa-twitter"></span></a></li> 
+                                   <li><a href="https://www.linkedin.com/in/mroa4/"><span class="fa-brands fa-linkedin-in"></span></a></li> 
+                                   <li><a href="http://t.me/mroa4"><span class="fa-brands fa-telegram"></span></a></li> 
+                                </ul>
+                            </div>
+                        </figure>
+                    </div>
+                    <div class="caption-box">
+                        <h4 class="name"><a href="https://mroa4.ir/">Omid Amini</a></h4>
+                        <span class="designation">Developer</span>
+                    </div>
+                </div>
+            </div>
+     
+            <div class="speaker-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="800ms">
+                <div class="inner-box">
+                    <div class="image-box">
+                        <figure class="image"><img src="{% static 'image\alireza_sadraii.jpg' %}" alt="">
+                            <div class="social-links">
+                                <ul>
+                                    <h3 class="name">AliReza Sadraii</h3>
+
+                                   <li><a href="https://github.com/sadraiiali"><span class="fa-brands fa-github"></span></a></li> 
+                                   <li><a href="http://twitter.com/sadraiiali"><span class="fab fa-twitter"></span></a></li> 
+                                   <li><a href="https://www.linkedin.com/in/alireza-sadraii-rad"><span class="fa-brands fa-linkedin-in"></span></a></li> 
+                                   <li><a href="http://t.me/thepiker"><span class="fa-brands fa-telegram"></span></a></li> 
+                                </ul>
+                            </div>
+                        </figure>
+                    </div>
+                    <div class="caption-box">
+                        <h4 class="name"><a href="https://sadraii.ir/">AliReza Sadraii</a></h4>
+                        <span class="designation">Developer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% else %}
+<script>
+  window.location.href = "/accounts/login/";
+  window.location.replace("/accounts/login/");
+</script>
+{% endif %}
+{% endblock %}
+
+    

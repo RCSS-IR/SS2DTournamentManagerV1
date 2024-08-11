@@ -1,0 +1,187 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Control Panel{% endblock %}
+
+{% if user.is_superuser %}
+
+{% block content %}
+<div id="overlay"> 
+  <img src="{% static 'image/loader.gif' %}" id="gif" style="display: none;" class="centerup" alt="">
+  <div id="overlaytext">Loading and Setup <br> Do Manual reload in max 5m</div>
+</div>
+<div class="ctrl-panel">
+  {% if messages %}
+  <div class="ctrl-panel2">
+    <h3> Something Went Wrong </h3>
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="ctrl-panel2">
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" role="switch" id="upload_status" onchange="updateStatus()" 
+      {% if upload_status %}checked{% endif %} >
+      <label class="form-check-label" for="upload_status">Upload Status</label>
+    </div>
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" role="switch" id="long_test_status" onchange="updateTestStatus()" 
+      {% if long_test_status %}checked{% endif %} >
+      <label class="form-check-label" for="long_test_status">Allow Long Test</label>
+    </div>
+    {% if not docker_status %} 
+      <a id="init_dtr" class="btn btn-success team-reg-button" style="margin-top: 8em" href="{% url 'init_dtr' %}">Initialize SS2D-DTR - Download from GIT and Bulid All Docker Files</a>
+    {%endif %}
+  </div>
+  <div class="ctrl-panel2">
+    <button type="button" class="btn btn-success iframe-add-button" data-bs-toggle="modal" data-bs-target="#IframeForm"
+      data-bs-whatever="">Add Iframe To Home</button>
+    <div class="modal fade" id="IframeForm" tabindex="-1" aria-labelledby="IframeFormLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="IframeFormLabel">Add Iframe To Home</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% if messages %}
+              {% for message in messages %}
+              {{ message }}
+              {% endfor %}
+            {% endif %}
+            <form action="{% url 'add_iframe' %}" method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="id_name" class="col-form-label">Name:</label>
+                <input type="text" class="form-control" name="name" maxlength="50" required="" id="id_name" value="{{ iframe_form.name }}">
+              </div>
+              <div class="mb-1">
+                <label for="id_iframe_url" class="col-form-label">IframeURL:</label>
+                <input type="text" class="form-control" name="url" required="" id="id_iframe_url" value="{{ iframe_form.url }}">
+              </div>
+              <div class="mb-3">
+                <label for="id_icon" class="col-form-label">Icon(FontAwesome):</label>
+                <input type="text" class="form-control" name="icon" maxlength="100" id="id_icon" value="{{ iframe_form.icon }}">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" value="Submit">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <table class="table iframe-table" id="iframe-table">
+      <thead>
+        <tr>
+          <th scope="col"><span class="table-column"> Name </th>
+          <th scope="col"><span class="table-column"> URL</th>
+          <th scope="col"><span class="table-column"> Icon </th>
+          <th scope="col"><span class="table-column"> Action </th>
+        </tr>
+      </thead>
+      <tbody id="iframe-table-body">
+        {% for iframe in iframes %}
+        <tr>
+          <th scope="row">{{ iframe.name }}</th>
+          <td>{{ iframe.url }}</td>
+          <td>{{ iframe.icon }}</td>
+          <td>
+            <a class="action" onclick="return confirm('Are you sure? Do you want to Delete {{ iframe.name }}?')" href="{% url 'del_iframe' id=iframe.id %}" title="Delete Iframe"><i class="fa-solid fa-trash-can fa-lg"
+                style="color: red"></i></a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="ctrl-panel2">
+    <table>
+      <thead>
+        <tr>
+          <th>Server Name</th>
+          <th>Team In</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for server in test_servers_status %}
+        <tr>
+          
+          <td>{{ server.0 }}</td>
+          <td>{{ server.1 }}</td>
+          <td>{{ server.2 }}</td>
+          <td>
+            {% if server.2 == "InUsed" %}
+            <a class="action" href="{% url 'kill_server' server_id=server.0 %}" title="kill server and make it free">
+              <i class="fa-solid fa-circle-stop fa-xl" style="color: red"></i>
+            </a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <th>Team In</th>
+          <th>Server Name</th>
+        </tr>
+        {% for team in test_servers_names %}
+        <tr>
+          <td>{{ team.1 }}</td>
+          <td>{{ team.0 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  function updateStatus() {
+    const upload_status_elm = document.getElementById('upload_status');
+    $.ajax({
+      type: "POST",
+      url: "{% url 'change_upload_status' %}",
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        'upload_status': upload_status_elm.checked
+      },
+    })
+  }
+  function updateTestStatus() {
+    const long_test_status_elm = document.getElementById('long_test_status');
+    $.ajax({
+      type: "POST",
+      url: "{% url 'change_long_test_status' %}",
+      data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        'long_test_status': long_test_status_elm.checked
+      },
+    })
+  }
+  $(function(){
+  $('#init_dtr').click(function(){
+    $('#gif').show(); 
+    $('#overlay').show(); 
+    $('#overlaytext').show(); 
+    // $('<div class=loadingDiv>loading...</div>').prependTo(document.body); 
+    return true;
+  });
+});
+
+</script>
+{% endblock %}
+
+{% else %}
+<script>
+  window.location.href = "/main/";
+  window.location.replace("/main/");
+</script>
+{% endif %}

@@ -1,0 +1,173 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload{% endblock %}
+{% block content %}
+<div id="overlay"> 
+  <img src="{% static 'image/loader.gif' %}" id="gif" style="display: none;" class="centerup" alt="">
+  <div id="overlaytext">Submitting your Binary <br> If noting happens in 5 min contact the admins</div>
+</div>
+{% if upload_status or user.is_superuser %}
+<div class="upload-bin-div">
+  <form action="" method="post" enctype="multipart/form-data" id="upload_form">
+    {% csrf_token %}
+    <p>{{ form.non_field_errors }}</p>
+    <p>{{ form.file.label_tag }} {{ form.file.help_text }}</p>
+  
+    <div>
+      <label for="id_upload" class="form-label">Choose a tar.gz binary file</label>
+      <input class="form-control form-control-lg" id="id_upload" type="file" name="file">
+      <div id="upload_error">
+        {{ form.file.errors }}
+      </div>
+    </div>
+    <div>
+      <input type="submit"  id="upload_btn" class="upload-btn btn btn-success"value="Upload New Binary" />
+      <button type="button" id="cancel_button" class="upload-btn btn btn-danger">Cancel</button>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">OutPut or Error:</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="recipient-name"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div>
+  <input type="text" id="team-search" placeholder="Search..." title="Type in something">
+</div> -->
+
+<div class="search">
+  <input type="text" id="upload-search" class="search__input" placeholder="Search...">
+  <div class="search__icon">
+    <i class="fa-brands fa-searchengin"></i>
+  </div>
+</div>
+<div class="container not-visible" id="progress">
+  <div class="progress" id="upload_progress">
+    <div class="progress__bar" id="upload_progress_bar">
+      <span class="progress__text" id="upload_progress_text">
+        Progress: <em>0%</em>
+      </span>
+    </div>
+  </div>
+</div>
+<table class="table team-table" id="upload-table">
+  <thead>
+    <tr>
+      <th scope="col"><span class="table-column">Team Name <i class="caret"></span></th>
+      <th scope="col"><span class="table-column">Type <i class="caret"></span></th>
+      <th scope="col"><span class="table-column">Upload Date <i class="caret"></span></th>
+      <th scope="col"><span class="table-column">Status <i class="caret"></span></th>
+      <th scope="col"><span class="table-column">Active <i class="caret"></span></th>
+      <th scope="col"><span class="table-column">Last Update Date <i class="caret"></span></th>
+      <th scope="col"><span class="table-column">Action <i class="caret"></span></th>
+    </tr>
+  </thead>
+  <tbody id="upload-table-body">
+    {% for binary in binaries %}
+    <tr id="row{{ binary.use }}">
+      <td scope="row">{{ binary.team.name }}</td>
+      <td>{{ binary.team.type }}</td>
+      <td>{{ binary.start_date }}</td>
+      <td>{{ binary.status }}</td>
+      <td>{{ binary.use }}</td>
+      <td>{{ binary.last_date }}</td>
+      <td>
+        {% if binary.dir_path %}
+        <a class="action" href="{% url 'download_binary' id=binary.id %}" title="Download Binary"><i
+            class="fa-solid fa-file-zipper fa-xl"></i></a>
+        {% endif %}
+        {% if binary.log %}
+        <a class="action" href="{% url 'download_log' id=binary.id %}" title="Download Log"><i
+            class="fa-solid fa-futbol fa-xl"></i></a>
+        {% endif %}
+        {% if binary.output %}
+        <a class="action" href="{% url 'download_out' id=binary.id %}" title="Download OutPuts"><i
+            class="fa-solid fa-file-lines fa-xl"></i></a>
+        {% endif %}
+        {% if binary.error %}
+        <a class="action" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+          data-bs-whatever="{{ binary.error }}" title="Show Errors">
+          <i class="fa-solid fa-triangle-exclamation fa-xl" style="color: red"></i>
+        </a>
+        {% endif %}
+        {% if binary.status == 'done' or binary.status == 'done-checked'%}
+          {% if upload_status and binary.log and binary.output and not binary.use %}
+          <a class="action Submitting" href="{% url 'submit_bin' id=binary.id %}" title="Submit Binary"><i
+              class="fa-regular fa-paper-plane fa-xl" style="color: green"></i></a>
+          {% endif %}
+        {% endif %}
+
+        {% if upload_status and long_test_status and binary.log and binary.output and binary.use and binary.status == 'done' %}
+        <a class="action" href="{% url 'check_bin' id=binary.id %}" title="Run test check"><i
+            class="fa-solid fa-check-to-slot fa-fade fa-xl" style="color: darkgreen"></i></a>
+        {% elif upload_status and long_test_status and binary.use and binary.status == 'in-test-check' %}
+            <a class="action" href="/main/upload_page" title="Update on test check"><i
+                class="fa-solid fa-gear fa-shake fa-xl" style="color: darkgreen"></i></a>
+        {% elif upload_status and long_test_status and binary.log and binary.output and binary.use %}
+          <a class="action" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+            data-bs-whatever="The Test-Check log and output replaced the normal test log and output. You can download them from perivios page (ball and files icons)"
+            title="where is check log">
+            <i class="fa-solid fa-check fa-xl" style="color: darkgreen"></i>
+          </a>
+        {% endif %}
+
+        {% if user.is_superuser %}
+        {% if binary.log and binary.output and not binary.use and not upload_status and binary.status == 'done'%}
+        <a class="action Submitting" href="{% url 'submit_bin' id=binary.id %}" title="Submit Binary"><i
+            class="fa-regular fa-paper-plane fa-xl" style="color: green"></i></a>
+        {% endif %}
+        {% if binary.std_out %}
+        
+        <a class="action" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+          data-bs-whatever="{{ binary.std_out }}" title="STD OUT">
+          <i class="fa-solid fa-triangle-exclamation fa-xl" style="color: black"></i>
+        </a>
+        {% endif %}
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block script %}
+{% load static %}
+
+<script src="{% static 'script/upload-table-script.js' %}"></script>
+<script src="{% static 'script/upload-bar-script.js' %}"></script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script>
+  $('#OpenImgUpload').click(function () { $('#imgupload').trigger('click'); });
+  const exampleModal = document.getElementById('exampleModal')
+  exampleModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget
+    const recipient = button.getAttribute('data-bs-whatever')
+    const modalBodyInput = exampleModal.querySelector('.modal-body #recipient-name')
+    modalBodyInput.textContent = recipient
+  })
+  $('.Submitting').click(function(){
+    $('#gif').show(); 
+    $('#overlay').show(); 
+    $('#overlaytext').show(); 
+    // $('<div class=loadingDiv>loading...</div>').prependTo(document.body); 
+    return true;
+  });
+</script>
+
+{% endblock %}
